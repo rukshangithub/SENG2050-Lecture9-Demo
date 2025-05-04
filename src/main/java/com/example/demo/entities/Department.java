@@ -34,21 +34,5 @@ public class Department {
 
     @Column(name = "name")
     private String name;
-
-    // @OneToMany (mappedBy = "department")
-    // @Builder.Default
-    // private List<Employee> employees = new ArrayList<Employee>();
-
-    // public void addEmployee(Employee employee)
-    // {
-    //     employees.add(employee);
-    //     employee.setDepartment(this);
-    // }
-
-    // public void removeEmployee(Employee employee)
-    // {
-    //     employees.remove(employee);
-    //     employee.setDepartment(null);   
-    // }
 }
 

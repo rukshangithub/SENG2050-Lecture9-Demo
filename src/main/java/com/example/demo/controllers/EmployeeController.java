@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.DemoApplication;
 import com.example.demo.dtos.EmployeeDto;
 import com.example.demo.dtos.RegisterEmployeeRequest;
+import com.example.demo.dtos.UpdateEmployeeRequest;
 import com.example.demo.entities.Employee;
 import com.example.demo.repositories.EmployeeRepository;
 
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 
@@ -71,14 +75,53 @@ public class EmployeeController /*~~(Could not parse as Java)~~>*/{
     @PostMapping
     public EmployeeDto createEmployee(@RequestBody RegisterEmployeeRequest  registerEmployee) {
 
-        System.out.println("Inside createEmplotee method");
+        // Create an employee object and save
         Employee employee = new Employee(registerEmployee.getName(), registerEmployee.getSalary());
         var newEmployee = employeeRepository.save(employee);
 
+        // Return an EmployeeDto with the created employee 
         var employeeDto =  new EmployeeDto(newEmployee.getId(), newEmployee.getName());
         return employeeDto;
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<UpdateEmployeeRequest> updateEmployee(
+                    @PathVariable(name="id") Integer id, 
+                    @RequestBody UpdateEmployeeRequest updatedEmployee) {
+        
+        // Finding the employee
+        var employee = employeeRepository.findById(id).orElse(null);
+        if (employee == null)
+        {
+            return new ResponseEntity<UpdateEmployeeRequest>(HttpStatus.NOT_FOUND);
+        }
+        
+        // Updating the fields and saving
+        employee.setName(updatedEmployee.getName());
+        employee.setSalary(updatedEmployee.getSalary());
+        var savedEmployee = employeeRepository.save(employee);
+
+        return new ResponseEntity<UpdateEmployeeRequest>(
+                        new UpdateEmployeeRequest(savedEmployee.getId(), savedEmployee.getName(), 
+                                savedEmployee.getSalary()), HttpStatus.OK);
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEmployee(@PathVariable(name = "id") Integer id)
+    {
+        // Finding the employee
+        var employee = employeeRepository.findById(id).orElse(null);
+        if (employee == null)
+        {
+            return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+        }
+
+        // Deleting the employee
+        employeeRepository.delete(employee);
+
+        return  new ResponseEntity<Void>(HttpStatus.OK);
+    }
 /*
     @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployee(@PathVariable Integer id)
