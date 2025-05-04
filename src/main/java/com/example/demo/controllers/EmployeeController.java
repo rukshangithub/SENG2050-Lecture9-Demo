@@ -10,10 +10,10 @@ import com.example.demo.dtos.UpdateEmployeeRequest;
 import com.example.demo.entities.Employee;
 import com.example.demo.repositories.EmployeeRepository;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,9 +31,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/employees")
-public class EmployeeController /*~~(Could not parse as Java)~~>*/{
+public class EmployeeController {
 
-    private final DemoApplication demoApplication;
     
     private final EmployeeRepository employeeRepository;
 /* 
@@ -73,7 +72,7 @@ public class EmployeeController /*~~(Could not parse as Java)~~>*/{
     */
 
     @PostMapping
-    public EmployeeDto createEmployee(@RequestBody RegisterEmployeeRequest  registerEmployee) {
+    public EmployeeDto createEmployee(@Valid @RequestBody RegisterEmployeeRequest  registerEmployee) {
 
         // Create an employee object and save
         Employee employee = new Employee(registerEmployee.getName(), registerEmployee.getSalary());
